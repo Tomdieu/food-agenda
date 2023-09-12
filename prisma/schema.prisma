@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -38,15 +38,16 @@ model Session {
 }
 
 model User {
-  id                  String               @id @default(cuid())
-  name                String?
-  email               String?              @unique
-  emailVerified       DateTime?
-  image               String?
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  accounts            Account[]
-  sessions            Session[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  links         Link[]
 }
 
 model VerificationRequest {
@@ -58,4 +59,24 @@ model VerificationRequest {
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, token])
+}
+
+model Link {
+  id        Int      @id @default(autoincrement())
+  original  String   @unique
+  short     String   @unique
+  ownerId   String
+  owner     User?    @relation(fields: [ownerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clicks    Click[]
+}
+
+model Click {
+  id        Int      @id @default(autoincrement())
+  linkId    Int
+  timestamp DateTime @default(now())
+  link      Link     @relation(fields: [linkId], references: [id])
+  ipAddress String?
+  country   String?
 }
