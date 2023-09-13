@@ -2,7 +2,6 @@
 import { Button, Divider } from "@nextui-org/react";
 import React from "react";
 import { Input } from "@nextui-org/react";
-import {signIn} from "next-auth/react"
 import {
   AiFillEye,
   AiFillEyeInvisible,
@@ -10,43 +9,45 @@ import {
   AiFillGoogleCircle,
 } from "react-icons/ai";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+
 import { LINKS } from "@/constants";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
-const RegisterForm = (props: Props) => {
+const LoginForm = (props: Props) => {
+  const router = useRouter();
+
   const [isVisible, setIsVisible] = React.useState(false);
 
   const [isLoading, setIsLoading] = React.useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const handSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setIsLoading(true);
     const formData = new FormData(event.target as HTMLFormElement);
 
-    const { name, email, password } = Object.fromEntries(formData.entries());
-    const user = { name, email, password };
+    const { email, password } = Object.fromEntries(formData.entries());
 
-    fetch("/api/register", {
-      method: "POST",
-      body: JSON.stringify(user),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error("An error occurred:", error);
-      })
-      .finally(() => {
+    setIsLoading(true);
+
+    signIn("credentials", { email, password, redirect: false }).then(
+      (callback) => {
         setIsLoading(false);
-      });
+
+        if (callback?.ok) {
+          router.refresh();
+          console.log("Login Successfull")
+        }
+
+        if (callback?.error) {
+          console.log(callback.error);
+        }
+      }
+    );
   };
 
   return (
@@ -59,49 +60,38 @@ const RegisterForm = (props: Props) => {
         </Link>
       </div>
       <div className="p-3 px-5 w-full flex-1 h-fullitems-center justify-center flex flex-col">
-        <h1 className="text-3xl font-bold text-center my-5">
-          Welcome To TrixUrl
-        </h1>
+        <h1 className="text-3xl font-bold text-center my-5">Welcome back</h1>
         <form
-          onSubmit={handSubmit}
+          onSubmit={handleSubmit}
+          action=""
           method="post"
           className="flex flex-col gap-4 px-2 lg:px-12"
         >
           <div>
             <h5 className="text-center font-bold">Create an account </h5>
             <span className="text-current font-light text-xs text-gray-600 text-center block">
-              Fill the form below
+              Enter your email and password to login
             </span>
           </div>
           <div className="w-full">
             <Input
+              required
               variant="bordered"
-              name="email"
               type="email"
               label="Email"
+              name="email"
               placeholder="Enter your email"
               className="rounded-none"
-              required
-            />
-          </div>
-          <div className="w-full">
-            <Input
-              variant="bordered"
-              name="name"
-              type="text"
-              label="Name"
-              placeholder="Enter your name"
-              className="rounded-none"
-              required
             />
           </div>
           <div className="w-full flex">
             <Input
+              required
+              name="password"
               label="Password"
               variant="bordered"
               placeholder="Enter your password"
               className="w-full flex-1"
-              name="password"
               endContent={
                 <button
                   className="focus:outline-none"
@@ -116,17 +106,9 @@ const RegisterForm = (props: Props) => {
                 </button>
               }
               type={isVisible ? "text" : "password"}
-              required
             />
           </div>
-          <Button
-            isLoading={isLoading}
-            disabled={isLoading}
-            className="bg-black text-white py-6"
-            type="submit"
-          >
-            Register
-          </Button>
+          <Button className="bg-black text-white py-6" type="submit">Login</Button>
         </form>
 
         <div className="flex gap-1 my-3 px-2 lg:px-12 items-center">
@@ -134,22 +116,37 @@ const RegisterForm = (props: Props) => {
           <h5 className="text-md">Or continue with</h5>
           <Divider className="flex-1" />
         </div>
-        <div className="flex flex-cols gap-2 px-2 lg:px-12" onClick={()=>signIn("github")}>
+        <div className="flex flex-cols gap-2 px-2 lg:px-12">
           <Button className="w-full hover:bg-black hover:text-white">
             <AiFillGithub />
             <span className="">Github</span>
           </Button>
-          <Button className="w-full hover:bg-black hover:text-white" onClick={()=>signIn("google")}>
+          <Button className="w-full hover:bg-black hover:text-white">
             <AiFillGoogleCircle />
             <span className="">Google</span>
           </Button>
         </div>
         <div className="py-5 w-full flex items-center justify-center">
           <h5 className="text-xs">
-            Already have an account ?{" "}
-            <Link className="font-semibold" href={LINKS.login}>
-              Login
+            Don&apos;t have an account ?{" "}
+            <Link className="font-semibold" href={LINKS.register}>
+              Register
             </Link>
+          </h5>
+        </div>
+        <div className="flex py-5 w-full items-center justify-center flex-col">
+          <h5 className="text-center text-xs lg:text-sm">
+            By clicking continue, you agree to our{" "}
+          </h5>
+          <h5 className="text-sm text-center">
+            <a className="underline font-semibold text-sm" href="#">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="#" className="underline font-semibold text-sm">
+              Privacy Policy
+            </a>
+            .
           </h5>
         </div>
       </div>
@@ -161,4 +158,4 @@ const RegisterForm = (props: Props) => {
   );
 };
 
-export default RegisterForm;
+export default LoginForm;
