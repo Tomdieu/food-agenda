@@ -1,6 +1,7 @@
 
 /** @type {import('tailwindcss').Config} */
 import {nextui} from "@nextui-org/react";
+const plugin = require('tailwindcss/plugin')
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -11,6 +12,11 @@ module.exports = {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
+    textShadow: {
+      sm: '0 1px 2px var(--tw-shadow-color)',
+      DEFAULT: '0 2px 4px var(--tw-shadow-color)',
+      lg: '0 8px 16px var(--tw-shadow-color)',
+    },
     container: {
       center: true,
       padding: "2rem",
@@ -37,6 +43,16 @@ module.exports = {
   },
   plugins: [
     require("tailwindcss-animate"),
-    nextui()
+    nextui(),
+    plugin(function ({ matchUtilities, theme }) {
+      matchUtilities(
+        {
+          'text-shadow': (value) => ({
+            textShadow: value,
+          }),
+        },
+        { values: theme('textShadow') }
+      )
+    }),
   ],
 }
