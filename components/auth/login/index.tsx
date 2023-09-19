@@ -11,6 +11,8 @@ import {
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 
+import { toast } from "react-hot-toast";
+
 import { LINKS } from "@/constants";
 import { useRouter } from "next/navigation";
 
@@ -40,11 +42,14 @@ const LoginForm = (props: Props) => {
 
         if (callback?.ok) {
           router.refresh();
-          console.log("Login Successfull")
+          toast.success("Logged in Successfully", { position: "top-center" });
+          console.log("Login Successfull");
+          router.push("/dashboard");
         }
 
         if (callback?.error) {
           console.log(callback.error);
+          toast.error("Error : " + callback.error);
         }
       }
     );
@@ -59,16 +64,16 @@ const LoginForm = (props: Props) => {
           </h5>
         </Link>
       </div>
-      <div className="p-3 px-5 w-full flex-1 h-fullitems-center justify-center flex flex-col">
+      <div className="p-3 sm:px-1 lg:px-5 w-full flex-1 h-fullitems-center justify-center flex flex-col">
         <h1 className="text-3xl font-bold text-center my-5">Welcome back</h1>
         <form
           onSubmit={handleSubmit}
           action=""
           method="post"
-          className="flex flex-col gap-4 px-2 lg:px-12"
+          className="flex flex-col gap-4 px-1 sm:px-2 lg:px-12"
         >
           <div>
-            <h5 className="text-center font-bold">Create an account </h5>
+            {/* <h5 className="text-center font-bold">Loggein an account </h5> */}
             <span className="text-current font-light text-xs text-gray-600 text-center block">
               Enter your email and password to login
             </span>
@@ -108,7 +113,14 @@ const LoginForm = (props: Props) => {
               type={isVisible ? "text" : "password"}
             />
           </div>
-          <Button className="bg-black text-white py-6" type="submit">Login</Button>
+          <Button
+            isLoading={isLoading}
+            disabled={isLoading}
+            className="bg-black text-white py-6"
+            type="submit"
+          >
+            Login
+          </Button>
         </form>
 
         <div className="flex gap-1 my-3 px-2 lg:px-12 items-center">
@@ -117,11 +129,39 @@ const LoginForm = (props: Props) => {
           <Divider className="flex-1" />
         </div>
         <div className="flex flex-cols gap-2 px-2 lg:px-12">
-          <Button className="w-full hover:bg-black hover:text-white">
+          <Button
+            type="button"
+            className="w-full hover:bg-black hover:text-white"
+            onClick={() => {
+              signIn("github",{callbackUrl: '/dashboard'} )
+            }}
+          >
             <AiFillGithub />
             <span className="">Github</span>
           </Button>
-          <Button className="w-full hover:bg-black hover:text-white">
+          <Button
+            className="w-full hover:bg-black hover:text-white"
+            onClick={() => {
+              signIn("google", { callbackUrl: "/dashboard" }).then(
+                (callback) => {
+                  console.log("Callback", { callback });
+                  if (callback?.ok) {
+                    router.refresh();
+                    toast.success("Logged in Successfully", {
+                      position: "top-center",
+                    });
+                    console.log("Login Successfull");
+                    router.push("/dashboard");
+                  }
+
+                  if (callback?.error) {
+                    console.log(callback.error);
+                    toast.error("Error : " + callback.error);
+                  }
+                }
+              );
+            }}
+          >
             <AiFillGoogleCircle />
             <span className="">Google</span>
           </Button>
@@ -134,16 +174,16 @@ const LoginForm = (props: Props) => {
             </Link>
           </h5>
         </div>
-        <div className="flex py-5 w-full items-center justify-center flex-col">
+        <div className="flex py-5 w-full items-center justify-center flex-col text-sm">
           <h5 className="text-center text-xs lg:text-sm">
             By clicking continue, you agree to our{" "}
           </h5>
-          <h5 className="text-sm text-center">
-            <a className="underline font-semibold text-sm" href="#">
+          <h5 className="text-xs text-center">
+            <a className="underline text-sm" href="#">
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="#" className="underline font-semibold text-sm">
+            <a href="#" className="underline text-sm">
               Privacy Policy
             </a>
             .

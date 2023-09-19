@@ -2,7 +2,7 @@
 import { Button, Divider } from "@nextui-org/react";
 import React from "react";
 import { Input } from "@nextui-org/react";
-import {signIn} from "next-auth/react"
+import { signIn } from "next-auth/react";
 import {
   AiFillEye,
   AiFillEyeInvisible,
@@ -10,12 +10,16 @@ import {
   AiFillGoogleCircle,
 } from "react-icons/ai";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LINKS } from "@/constants";
+import toast from "react-hot-toast";
 
 type Props = {};
 
 const RegisterForm = (props: Props) => {
   const [isVisible, setIsVisible] = React.useState(false);
+
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -134,12 +138,38 @@ const RegisterForm = (props: Props) => {
           <h5 className="text-md">Or continue with</h5>
           <Divider className="flex-1" />
         </div>
-        <div className="flex flex-cols gap-2 px-2 lg:px-12" onClick={()=>signIn("github")}>
-          <Button className="w-full hover:bg-black hover:text-white">
+        <div className="flex flex-cols gap-2 px-2 lg:px-12">
+          <Button
+            type="button"
+            className="w-full hover:bg-black hover:text-white"
+            onClick={() => {signIn("github",{callbackUrl: '/dashboard'} )}}
+          >
             <AiFillGithub />
             <span className="">Github</span>
           </Button>
-          <Button className="w-full hover:bg-black hover:text-white" onClick={()=>signIn("google")}>
+          <Button
+            className="w-full hover:bg-black hover:text-white"
+            onClick={() => {
+              signIn("google", { callbackUrl: "/dashboard" }).then(
+                (callback) => {
+                  console.log(callback);
+                  if (callback?.ok) {
+                    router.refresh();
+                    toast.success("Logged in Successfully", {
+                      position: "top-center",
+                    });
+                    console.log("Login Successfull");
+                    router.push("/dashboard");
+                  }
+
+                  if (callback?.error) {
+                    console.log(callback.error);
+                    toast.error("Error : " + callback.error);
+                  }
+                } 
+              );
+            }}
+          >
             <AiFillGoogleCircle />
             <span className="">Google</span>
           </Button>
