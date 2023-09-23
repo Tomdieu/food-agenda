@@ -12,6 +12,7 @@ const TypeWriter = () => {
           strings:  ["Save Your Daily Food Comsumption", "Calculate Your BMI", "Calculer Les Calorie"],
           autoStart: true,
           loop: true,
+          cursor:"."
         }}
       />
     </div>

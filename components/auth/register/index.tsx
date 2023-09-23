@@ -185,7 +185,7 @@ const RegisterForm = (props: Props) => {
       </div>
       <div className="flex my-5 flex-col items-center">
         <h5 className="text-md font-bold">Agenda</h5>
-        <p>Copyright &copy; {new Date().getFullYear()} Tomdieu </p>
+        <p>Copyright &copy; {new Date().getFullYear()}  Trxi  Tomdieu </p>
       </div>
     </div>
   );

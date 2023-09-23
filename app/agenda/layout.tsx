@@ -1,9 +1,8 @@
 import NavBar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
-import { SheetSidebar } from "@/components/sidebar/sheet";
 import getCurrentUser from "@/lib/getCurrentUser";
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Agenda | Dashboard",
@@ -17,9 +16,9 @@ export default async function DashboardLayout({
 }) {
   const currentUser = await getCurrentUser();
 
-  if(!currentUser){
-    return redirect("/auth");
-  }
+  // if(!currentUser){
+  //   return redirect("/auth");
+  // }
 
 
   return (  
