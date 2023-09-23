@@ -9,7 +9,7 @@ const TypeWriter = () => {
     <div>
       <Typewriter
         options={{
-          strings:  ["Shorten URLs", "Share Links", "Track Clicks"],
+          strings:  ["Save Your Daily Food Comsumption", "Calculate Your BMI", "Calculer Les Calorie"],
           autoStart: true,
           loop: true,
         }}

@@ -133,7 +133,7 @@ const LoginForm = (props: Props) => {
             type="button"
             className="w-full hover:bg-black hover:text-white"
             onClick={() => {
-              signIn("github",{callbackUrl: '/dashboard'} )
+              signIn("github",{callbackUrl: '/agenda'} )
             }}
           >
             <AiFillGithub />
@@ -142,7 +142,7 @@ const LoginForm = (props: Props) => {
           <Button
             className="w-full hover:bg-black hover:text-white"
             onClick={() => {
-              signIn("google", { callbackUrl: "/dashboard" }).then(
+              signIn("google", { callbackUrl: "/agenda" }).then(
                 (callback) => {
                   console.log("Callback", { callback });
                   if (callback?.ok) {
@@ -191,7 +191,7 @@ const LoginForm = (props: Props) => {
         </div>
       </div>
       <div className="flex my-5 flex-col items-center">
-        <h5 className="text-md font-bold">Trix Url</h5>
+        <h5 className="text-md font-bold">Agenda</h5>
         <p>Copyright &copy; {new Date().getFullYear()} Tomdieu </p>
       </div>
     </div>
